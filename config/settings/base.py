@@ -67,7 +67,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -79,7 +78,6 @@ DATABASES = {
     }
 }
 
-# Auth
 AUTH_USER_MODEL = 'accounts.User'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -89,10 +87,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'apps.accounts.authentication.BlacklistableJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -107,7 +104,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-# JWT
 from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -117,24 +113,33 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# Spectacular (Swagger)
 SPECTACULAR_SETTINGS = {
+    'SECURITY': [{'BearerAuth': []}],
+        'APPEND_COMPONENTS': {
+            'securitySchemes': {
+                'BearerAuth': {
+                    'type': 'http',
+                    'scheme': 'bearer',
+                    'bearerFormat': 'JWT',
+                }
+            }
+        },
     'TITLE': 'SmartSave API',
-    'DESCRIPTION': 'سامانه هوشمند مدیریت مالی شخصی',
+    'DESCRIPTION': 'Smart Personal Finance Management System',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
     'TAGS': [
-        {'name': 'Auth', 'description': 'احراز هویت'},
-        {'name': 'Expenses', 'description': 'مدیریت هزینه‌ها'},
-        {'name': 'Incomes', 'description': 'مدیریت درآمد'},
-        {'name': 'Savings', 'description': 'اهداف پس‌انداز'},
-        {'name': 'Budgets', 'description': 'بودجه‌بندی'},
-        {'name': 'Analytics', 'description': 'داشبورد و تحلیل'},
+        {'name': 'Auth', 'description': 'Authentication'},
+        {'name': 'Expenses', 'description': 'Expense management'},
+        {'name': 'Incomes', 'description': 'Income management'},
+        {'name': 'Savings', 'description': 'Savings goals'},
+        {'name': 'Budgets', 'description': 'Budget management'},
+        {'name': 'Analytics', 'description': 'Dashboard and analytics'},
     ],
 }
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Tehran'
 USE_I18N = True
 USE_TZ = True

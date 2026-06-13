@@ -21,8 +21,14 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from django.shortcuts import redirect
+
+
+def home(request):
+    return redirect('swagger-ui')
 
 urlpatterns = [
+    path('', home),
     path('admin/', admin.site.urls),
 
     # API v1
