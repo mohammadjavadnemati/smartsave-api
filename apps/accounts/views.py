@@ -11,11 +11,12 @@ from .serializers import (
     ChangePasswordSerializer,
 )
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from drf_spectacular.utils import inline_serializer
-from rest_framework import serializers as drf_serializers
 from datetime import datetime, timezone as dt_timezone
 from datetime import datetime
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.views import TokenRefreshView
+from drf_spectacular.utils import extend_schema, inline_serializer
+import rest_framework.serializers as drf_serializers
 
 
 
@@ -145,6 +146,23 @@ class ChangePasswordView(APIView):
             {'message': 'Password changed successfully'},
             status=status.HTTP_200_OK
         )
+
+
+
+
+@extend_schema(
+    tags=['Auth'],
+    request=inline_serializer(
+        name='TokenRefreshRequest',
+        fields={'refresh': drf_serializers.CharField()}
+    ),
+    responses=inline_serializer(
+        name='TokenRefreshResponse',
+        fields={'access': drf_serializers.CharField()}
+    ),
+)
+class CustomTokenRefreshView(TokenRefreshView):
+    pass
 
 # @extend_schema(tags=['Auth'])
 # class ChangePasswordView(APIView):
