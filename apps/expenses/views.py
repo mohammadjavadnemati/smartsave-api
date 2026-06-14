@@ -16,6 +16,9 @@ from .serializers import (
     SavingsImpactSerializer,
 )
 from .filters import ExpenseFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 
 @extend_schema(tags=['Expenses'])
@@ -45,14 +48,30 @@ class CategoryViewSet(viewsets.ModelViewSet):
             )
         return super().destroy(request, *args, **kwargs)
 
-
 @extend_schema(tags=['Expenses'])
 class ExpenseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwner]
     filterset_class = ExpenseFilter
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['description', 'category__name', 'category__slug']
     ordering_fields = ['date', 'amount', 'created_at']
     ordering = ['-date']
+
+    @extend_schema(
+        summary='List expenses',
+        parameters=[
+            OpenApiParameter('amount_min', OpenApiTypes.DECIMAL, description='Minimum amount'),
+            OpenApiParameter('amount_max', OpenApiTypes.DECIMAL, description='Maximum amount'),
+            OpenApiParameter('date_from', OpenApiTypes.DATE, description='Start date (YYYY-MM-DD)'),
+            OpenApiParameter('date_to', OpenApiTypes.DATE, description='End date (YYYY-MM-DD)'),
+            OpenApiParameter('month', OpenApiTypes.INT, description='Month number (1-12)'),
+            OpenApiParameter('year', OpenApiTypes.INT, description='Year (e.g. 2026)'),
+            OpenApiParameter('category_slug', OpenApiTypes.STR, description='Category slug'),
+            OpenApiParameter('is_recurring', OpenApiTypes.BOOL, description='Is recurring'),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
@@ -64,9 +83,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             user=self.request.user
         ).select_related('category')
 
-
     @extend_schema(
         summary='Get expense summary',
+        filters=False,
         responses=ExpenseSummarySerializer,
     )
     @action(detail=False, methods=['get'], url_path='summary')
@@ -108,6 +127,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 required=True,
             )
         ],
+        filters=False,
         responses=SavingsImpactSerializer,
     )
     @action(detail=False, methods=['get'], url_path='savings-impact')
