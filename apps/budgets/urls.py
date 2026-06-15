@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from . import views
 
 app_name = 'budgets'
 
+router = DefaultRouter()
+router.register('', views.BudgetViewSet, basename='budget')
+
 urlpatterns = [
-    # مسیرهای API اینجا
+    path('', include(router.urls)),
 ]
