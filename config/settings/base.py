@@ -114,16 +114,6 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'SECURITY': [{'BearerAuth': []}],
-        'APPEND_COMPONENTS': {
-            'securitySchemes': {
-                'BearerAuth': {
-                    'type': 'http',
-                    'scheme': 'bearer',
-                    'bearerFormat': 'JWT',
-                }
-            }
-        },
     'TITLE': 'SmartSave API',
     'DESCRIPTION': 'Smart Personal Finance Management System',
     'VERSION': '1.0.0',
@@ -137,6 +127,19 @@ SPECTACULAR_SETTINGS = {
         {'name': 'Budgets', 'description': 'Budget management'},
         {'name': 'Analytics', 'description': 'Dashboard and analytics'},
     ],
+    'SECURITY': [{'BearerAuth': []}],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    },
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+    },
 }
 
 LANGUAGE_CODE = 'en-us'

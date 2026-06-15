@@ -6,6 +6,7 @@ app_name = 'expenses'
 
 router = DefaultRouter()
 router.register('categories', views.CategoryViewSet, basename='category')
+router.register('recurring', views.RecurringExpenseViewSet, basename='recurring')
 router.register('', views.ExpenseViewSet, basename='expense')
 
 urlpatterns = [
