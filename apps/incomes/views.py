@@ -16,7 +16,6 @@ from .serializers import (
     IncomeSourceSerializer,
     IncomeSourceUpdateSerializer,
     IncomeSummarySerializer,
-    MonthlyIncomeReportSerializer,
 )
 from .filters import IncomeFilter
 
@@ -43,7 +42,6 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        # نمیشه منبع درآمدی پیش‌فرض رو حذف کرد
         if instance.is_default:
             return Response(
                 {'error': 'Default income sources cannot be deleted'},
@@ -97,7 +95,7 @@ class IncomeViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='summary')
     def summary(self, request):
-        """خلاصه کلی درآمدها"""
+        """Overall income summary"""
         queryset = self.filter_queryset(self.get_queryset())
 
         total = queryset.aggregate(
@@ -135,7 +133,7 @@ class IncomeViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='monthly-report')
     def monthly_report(self, request):
-        """گزارش درآمد ماهانه"""
+        """Monthly income report"""
         queryset = self.get_queryset()
 
         year = request.query_params.get('year')
@@ -178,7 +176,7 @@ class IncomeViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='vs-expenses')
     def vs_expenses(self, request):
-        """مقایسه درآمد و هزینه ماهانه"""
+        """Monthly income and expense comparison"""
         from apps.expenses.models import Expense
 
         year = request.query_params.get('year')

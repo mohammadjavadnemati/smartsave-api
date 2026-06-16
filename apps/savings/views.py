@@ -9,7 +9,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from core.permissions import IsOwner
-from core.utils import calculate_months_to_goal, calculate_savings_impact
+from core.utils import calculate_months_to_goal
 from .models import SavingsGoal, SavingsDeposit
 from .serializers import (
     SavingsGoalSerializer,
@@ -60,7 +60,7 @@ class SavingsGoalViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='progress')
     def progress(self, request):
-        """پیشرفت کلی همه اهداف پس‌انداز"""
+        """Overall savings goals progress"""
         goals = SavingsGoal.objects.filter(user=request.user)
 
         stats = goals.aggregate(
@@ -100,8 +100,8 @@ class SavingsGoalViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='predict')
     def predict(self, request, pk=None):
         """
-        پیش‌بینی زمان رسیدن به هدف
-        مثال: با پس‌انداز ۲۵۰ دلار در ماه، ۴۰ ماه دیگه به هدف میرسی
+        Estimate time to reach the goal
+        Example: With saving $250 per month, you will reach the goal in 40 months
         """
         goal = self.get_object()
         monthly_saving = request.query_params.get('monthly_saving')
@@ -167,23 +167,19 @@ class SavingsDepositViewSet(viewsets.ModelViewSet):
         return SavingsDepositSerializer
 
     def get_queryset(self):
-        # فقط واریزی‌های مربوط به اهداف این کاربر
         return SavingsDeposit.objects.filter(
             goal__user=self.request.user
         ).select_related('goal')
 
     def perform_create(self, serializer):
         deposit = serializer.save()
-        # آپدیت کردن current_amount هدف بعد از واریز
         goal = deposit.goal
         goal.current_amount += deposit.amount
-        # اگه به هدف رسید، وضعیت رو completed کن
         if goal.current_amount >= goal.target_amount:
             goal.status = SavingsGoal.Status.COMPLETED
         goal.save()
 
     def perform_destroy(self, instance):
-        # کم کردن مبلغ از current_amount هدف هنگام حذف واریزی
         goal = instance.goal
         goal.current_amount = max(
             goal.current_amount - instance.amount,

@@ -16,7 +16,7 @@ from apps.expenses.models import RecurringExpense
 @pytest.mark.django_db
 class TestFullUserFlow:
     """
-    تست کامل جریان کاری یه کاربر از ثبت‌نام تا داشبورد
+    End-to-end test of a user's workflow from registration to dashboard
     """
 
     def setup_method(self):
@@ -24,17 +24,16 @@ class TestFullUserFlow:
 
     def test_complete_financial_flow(self):
         """
-        جریان کامل:
-        ۱. ثبت‌نام
-        ۲. ثبت درآمد
-        ۳. ثبت هزینه
-        ۴. ساخت بودجه
-        ۵. ساخت هدف پس‌انداز
-        ۶. واریز به هدف
-        ۷. بررسی داشبورد
+        Full workflow:
+        1. Sign up
+        2. Add income
+        3. Add expense
+        4. Create budget
+        5. Create savings goal
+        6. Deposit into goal
+        7. Check dashboard
         """
 
-        # ۱. ثبت‌نام
         register_url = reverse('accounts:register')
         response = self.client.post(register_url, {
             'email': 'test@smartsave.com',
@@ -49,7 +48,6 @@ class TestFullUserFlow:
             HTTP_AUTHORIZATION=f'Bearer {access_token}'
         )
 
-        # ۲. ثبت درآمد
         source_url = reverse('incomes:source-list')
         source_response = self.client.post(source_url, {
             'name': 'Main Job',
@@ -68,7 +66,6 @@ class TestFullUserFlow:
         })
         assert income_response.status_code == status.HTTP_201_CREATED
 
-        # ۳. ثبت هزینه
         category_url = reverse('expenses:category-list')
         category_response = self.client.post(category_url, {
             'name': 'Groceries',
@@ -86,7 +83,6 @@ class TestFullUserFlow:
         })
         assert expense_response.status_code == status.HTTP_201_CREATED
 
-        # ۴. ساخت بودجه
         budget_url = reverse('budgets:budget-list')
         budget_response = self.client.post(budget_url, {
             'category': category_id,
@@ -97,7 +93,6 @@ class TestFullUserFlow:
         })
         assert budget_response.status_code == status.HTTP_201_CREATED
 
-        # چک کردن usage بودجه
         budget_id = budget_response.data['id']
         budget_detail_url = reverse(
             'budgets:budget-detail', kwargs={'pk': budget_id}
@@ -106,7 +101,6 @@ class TestFullUserFlow:
         assert budget_detail.data['usage_percentage'] == 40.0
         assert budget_detail.data['alert_level'] == 'none'
 
-        # ۵. ساخت هدف پس‌انداز
         goal_url = reverse('savings:goal-list')
         goal_response = self.client.post(goal_url, {
             'title': 'Emergency Fund',
@@ -116,7 +110,6 @@ class TestFullUserFlow:
         assert goal_response.status_code == status.HTTP_201_CREATED
         goal_id = goal_response.data['id']
 
-        # ۶. واریز به هدف
         deposit_url = reverse('savings:deposit-list')
         deposit_response = self.client.post(deposit_url, {
             'goal': goal_id,
@@ -126,7 +119,6 @@ class TestFullUserFlow:
         })
         assert deposit_response.status_code == status.HTTP_201_CREATED
 
-        # چک کردن پیشرفت هدف
         goal_detail_url = reverse(
             'savings:goal-detail', kwargs={'pk': goal_id}
         )
@@ -134,7 +126,6 @@ class TestFullUserFlow:
         assert goal_detail.data['current_amount'] == '500.00'
         assert goal_detail.data['progress_percentage'] == 5.0
 
-        # ۷. بررسی داشبورد
         dashboard_url = reverse('analytics:dashboard')
         dashboard_response = self.client.get(
             dashboard_url, {'year': 2026, 'month': 6}
@@ -150,7 +141,7 @@ class TestFullUserFlow:
 @pytest.mark.django_db
 class TestUserDataIsolation:
     """
-    تست اینکه کاربران به داده‌های هم دسترسی ندارن
+    Test that users cannot access each other's data
     """
 
     def test_expense_isolation(self, db):
@@ -163,32 +154,27 @@ class TestUserDataIsolation:
         expense1 = ExpenseFactory(user=user1, category=category1)
         expense2 = ExpenseFactory(user=user2, category=category2)
 
-        # کاربر ۱
         client1 = APIClient()
         refresh1 = RefreshToken.for_user(user1)
         client1.credentials(
             HTTP_AUTHORIZATION=f'Bearer {refresh1.access_token}'
         )
 
-        # کاربر ۲
         client2 = APIClient()
         refresh2 = RefreshToken.for_user(user2)
         client2.credentials(
             HTTP_AUTHORIZATION=f'Bearer {refresh2.access_token}'
         )
 
-        # کاربر ۱ فقط هزینه خودش رو میبینه
         url = reverse('expenses:expense-list')
         response1 = client1.get(url)
         assert response1.data['count'] == 1
         assert response1.data['results'][0]['id'] == expense1.id
 
-        # کاربر ۲ فقط هزینه خودش رو میبینه
         response2 = client2.get(url)
         assert response2.data['count'] == 1
         assert response2.data['results'][0]['id'] == expense2.id
 
-        # کاربر ۱ نمیتونه هزینه کاربر ۲ رو ببینه
         detail_url = reverse(
             'expenses:expense-detail', kwargs={'pk': expense2.id}
         )
@@ -237,15 +223,12 @@ class TestUserDataIsolation:
 
 @pytest.mark.django_db
 class TestRecurringExpenseAutoGenerate:
-    """
-    تست auto-generate هزینه‌های تکرارشونده
-    """
+    """Test auto-generation of recurring expenses"""
 
     def test_auto_generate_on_expense_list(self, db):
         user = UserFactory()
         category = CategoryFactory(user=user)
 
-        # ساخت recurring expense
         RecurringExpense.objects.create(
             user=user,
             category=category,
@@ -263,11 +246,9 @@ class TestRecurringExpenseAutoGenerate:
             HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}'
         )
 
-        # قبل از request هیچ expense ای نیست
         from apps.expenses.models import Expense
         assert Expense.objects.filter(user=user).count() == 0
 
-        # بعد از request expense ساخته میشه
         url = reverse('expenses:expense-list')
         response = client.get(url)
         assert response.status_code == status.HTTP_200_OK
@@ -277,7 +258,7 @@ class TestRecurringExpenseAutoGenerate:
         ).count() == 1
 
     def test_no_duplicate_generation(self, db):
-        """نباید دو بار توی یه ماه generate بشه"""
+        """Should not be generated twice in the same month"""
         user = UserFactory()
         category = CategoryFactory(user=user)
 
@@ -301,11 +282,9 @@ class TestRecurringExpenseAutoGenerate:
         from apps.expenses.models import Expense
         url = reverse('expenses:expense-list')
 
-        # دو بار request میزنیم
         client.get(url)
         client.get(url)
 
-        # باید فقط ۰ تا expense باشه چون این ماه قبلاً generate شده
         assert Expense.objects.filter(
             user=user,
             description='[Recurring] Netflix'
@@ -315,7 +294,7 @@ class TestRecurringExpenseAutoGenerate:
 @pytest.mark.django_db
 class TestBudgetAlerts:
     """
-    تست سیستم هشدار بودجه
+    Test budget alert system
     """
 
     def test_warning_alert_at_80_percent(self, db):
@@ -384,7 +363,7 @@ class TestBudgetAlerts:
 @pytest.mark.django_db
 class TestFinancialHealthScore:
     """
-    تست امتیاز سلامت مالی
+    Test financial health score
     """
 
     def test_excellent_score(self, db):
@@ -399,7 +378,6 @@ class TestFinancialHealthScore:
         source = IncomeSourceFactory(user=user)
         category = CategoryFactory(user=user)
 
-        # درآمد بالا، هزینه پایین
         IncomeFactory(
             user=user, source=source,
             amount=Decimal('5000.00'),
@@ -429,7 +407,6 @@ class TestFinancialHealthScore:
         source = IncomeSourceFactory(user=user)
         category = CategoryFactory(user=user)
 
-        # درآمد پایین، هزینه بالا
         IncomeFactory(
             user=user, source=source,
             amount=Decimal('1000.00'),

@@ -34,7 +34,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering = ['name']
 
     def get_queryset(self):
-        # فقط دسته‌بندی‌های خود کاربر
         return Category.objects.filter(
             user=self.request.user
         ).annotate(
@@ -44,7 +43,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        # نمیشه دسته‌بندی پیش‌فرض رو حذف کرد
         if instance.is_default:
             return Response(
                 {'error': 'Default categories cannot be deleted'},
@@ -68,7 +66,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return ExpenseCreateSerializer
 
     def _auto_generate_recurring(self):
-        """خودکار هزینه‌های تکرارشونده رو generate می‌کنه"""
+        """Automatically generates recurring expenses"""
         from datetime import date
         today = date.today()
         recurring_list = RecurringExpense.objects.filter(
@@ -138,7 +136,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='summary')
     def summary(self, request):
-        """خلاصه کلی هزینه‌ها"""
+        """Total expense summary"""
         queryset = self.filter_queryset(self.get_queryset())
 
         total = queryset.aggregate(
@@ -177,7 +175,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='savings-impact')
     def savings_impact(self, request):
-        """ماشین حساب تأثیر پس‌انداز"""
+        """Savings impact calculator"""
         query = request.query_params.get('q', '').strip()
         if not query:
             return Response(
@@ -260,7 +258,7 @@ class RecurringExpenseViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path='summary')
     def summary(self, request):
-        """خلاصه هزینه‌های تکرارشونده"""
+        """Summary of recurring expenses"""
         queryset = self.get_queryset().filter(is_active=True)
 
         total_monthly = sum(r.monthly_cost for r in queryset)
@@ -283,55 +281,3 @@ class RecurringExpenseViewSet(viewsets.ModelViewSet):
             'items': RecurringExpenseSerializer(queryset, many=True).data,
         })
 
-    # @extend_schema(
-    #     summary='Generate expenses from recurring',
-    #     filters=False,
-    # )
-    # @action(detail=False, methods=['post'], url_path='generate')
-    # def generate(self, request):
-    #     """تولید هزینه‌های واقعی از هزینه‌های تکرارشونده"""
-    #     today = date.today()
-    #     generated_count = 0
-    #     recurring_list = self.get_queryset().filter(is_active=True)
-    #
-    #     for recurring in recurring_list:
-    #         should_generate = False
-    #
-    #         if recurring.last_generated is None:
-    #             should_generate = True
-    #         else:
-    #             if recurring.frequency == RecurringExpense.Frequency.DAILY:
-    #                 should_generate = recurring.last_generated < today
-    #             elif recurring.frequency == RecurringExpense.Frequency.WEEKLY:
-    #                 should_generate = (today - recurring.last_generated).days >= 7
-    #             elif recurring.frequency == RecurringExpense.Frequency.MONTHLY:
-    #                 should_generate = (
-    #                     recurring.last_generated.month != today.month or
-    #                     recurring.last_generated.year != today.year
-    #                 )
-    #             elif recurring.frequency == RecurringExpense.Frequency.YEARLY:
-    #                 should_generate = recurring.last_generated.year != today.year
-    #
-    #         if recurring.end_date and today > recurring.end_date:
-    #             recurring.is_active = False
-    #             recurring.save()
-    #             continue
-    #
-    #         if should_generate:
-    #             Expense.objects.create(
-    #                 user=recurring.user,
-    #                 category=recurring.category,
-    #                 amount=recurring.amount,
-    #                 description=f'[Recurring] {recurring.title}',
-    #                 date=today,
-    #                 is_recurring=True,
-    #             )
-    #             recurring.last_generated = today
-    #             recurring.save()
-    #             generated_count += 1
-    #
-    #     return Response({
-    #         'message': f'{generated_count} recurring expense(s) generated successfully',
-    #         'generated_count': generated_count,
-    #         'generated_date': today,
-    #     })

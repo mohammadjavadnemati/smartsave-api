@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 def calculate_months_to_goal(current_amount: Decimal, target_amount: Decimal,
                               monthly_saving: Decimal) -> int | None:
-    """محاسبه تعداد ماه تا رسیدن به هدف"""
+    """Calculate the number of months to reach the goal"""
     if monthly_saving <= 0:
         return None
     remaining = target_amount - current_amount
@@ -16,7 +16,7 @@ def calculate_months_to_goal(current_amount: Decimal, target_amount: Decimal,
 
 
 def calculate_savings_impact(monthly_amount: Decimal) -> dict:
-    """محاسبه تأثیر پس‌انداز در بازه‌های مختلف"""
+    """Calculate the impact of savings over different time periods"""
     return {
         '1_month': monthly_amount * 1,
         '6_months': monthly_amount * 6,
@@ -26,7 +26,7 @@ def calculate_savings_impact(monthly_amount: Decimal) -> dict:
 
 
 def get_date_range(period: str) -> tuple[date, date]:
-    """برگرداندن بازه تاریخی بر اساس دوره"""
+    """Return date range based on period"""
     today = date.today()
     if period == 'daily':
         return today, today

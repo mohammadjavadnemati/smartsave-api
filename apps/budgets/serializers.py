@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from django.utils import timezone
 from .models import Budget
-from apps.expenses.serializers import CategorySerializer
 
 
 class BudgetSerializer(serializers.ModelSerializer):
@@ -29,14 +27,12 @@ class BudgetSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         user = self.context['request'].user
 
-        # چک کردن اینکه دسته‌بندی متعلق به این کاربر باشه
         category = attrs.get('category')
         if category and category.user != user:
             raise serializers.ValidationError(
                 {'category': 'Invalid category'}
             )
 
-        # چک کردن تکراری نبودن بودجه
         qs = Budget.objects.filter(
             user=user,
             category=attrs.get('category'),
@@ -89,7 +85,7 @@ class BudgetUpdateSerializer(serializers.ModelSerializer):
 
 
 class BudgetAlertSerializer(serializers.Serializer):
-    """هشدارهای بودجه"""
+    """Budget alerts"""
     budget_id = serializers.IntegerField()
     category_name = serializers.CharField()
     category_slug = serializers.CharField()
@@ -102,7 +98,7 @@ class BudgetAlertSerializer(serializers.Serializer):
 
 
 class BudgetSummarySerializer(serializers.Serializer):
-    """خلاصه بودجه‌بندی ماهانه"""
+    """Monthly budget summary"""
     total_budget = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_spent = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_remaining = serializers.DecimalField(max_digits=12, decimal_places=2)

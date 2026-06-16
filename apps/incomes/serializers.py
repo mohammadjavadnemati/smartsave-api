@@ -114,7 +114,7 @@ class IncomeUpdateSerializer(serializers.ModelSerializer):
 
 
 class IncomeSummarySerializer(serializers.Serializer):
-    """خلاصه درآمدها برای داشبورد"""
+    """Income summary for dashboard"""
     total_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
     income_count = serializers.IntegerField()
     average_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
@@ -122,7 +122,7 @@ class IncomeSummarySerializer(serializers.Serializer):
 
 
 class MonthlyIncomeReportSerializer(serializers.Serializer):
-    """گزارش درآمد ماهانه"""
+    """Monthly income report"""
     month = serializers.DateField()
     total_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
     income_count = serializers.IntegerField()

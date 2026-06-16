@@ -1,6 +1,5 @@
 import factory
 from factory.django import DjangoModelFactory
-from django.utils import timezone
 from decimal import Decimal
 from apps.accounts.tests.factories import UserFactory
 from apps.savings.models import SavingsGoal, SavingsDeposit

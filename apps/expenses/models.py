@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class Category(models.Model):
-    # دسته‌بندی‌های پیش‌فرض سیستم
     DEFAULT_CATEGORIES = [
         ('food', 'Food'),
         ('transport', 'Transport'),
@@ -38,7 +37,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'category'
         verbose_name_plural = 'categories'
-        # هر کاربر نمی‌تونه دو دسته با یک اسم داشته باشه
         unique_together = ('user', 'slug')
 
     def __str__(self):
@@ -46,7 +44,7 @@ class Category(models.Model):
 
     @classmethod
     def create_defaults_for_user(cls, user):
-        """ساخت دسته‌بندی‌های پیش‌فرض برای کاربر جدید"""
+        """Create default categories for a new user"""
         defaults = [
             cls(user=user, name=name, slug=slug, is_default=True)
             for slug, name in cls.DEFAULT_CATEGORIES
@@ -158,7 +156,7 @@ class RecurringExpense(models.Model):
 
     @property
     def monthly_cost(self):
-        """محاسبه هزینه ماهانه معادل"""
+        """Calculate equivalent monthly cost"""
         if self.frequency == self.Frequency.DAILY:
             return self.amount * 30
         elif self.frequency == self.Frequency.WEEKLY:
@@ -171,5 +169,5 @@ class RecurringExpense(models.Model):
 
     @property
     def annual_cost(self):
-        """محاسبه هزینه سالانه معادل"""
+        """Calculate equivalent annual cost"""
         return self.monthly_cost * 12

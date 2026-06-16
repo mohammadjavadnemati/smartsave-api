@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class IncomeSource(models.Model):
-    # منابع درآمدی پیش‌فرض
     DEFAULT_SOURCES = [
         ('salary', 'Salary'),
         ('freelance', 'Freelance'),
@@ -37,7 +36,7 @@ class IncomeSource(models.Model):
 
     @classmethod
     def create_defaults_for_user(cls, user):
-        """ساخت منابع درآمدی پیش‌فرض برای کاربر جدید"""
+        """Create default income sources for a new user"""
         defaults = [
             cls(user=user, name=name, slug=slug, is_default=True)
             for slug, name in cls.DEFAULT_SOURCES

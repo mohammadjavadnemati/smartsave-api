@@ -1,6 +1,5 @@
 import factory
 from factory.django import DjangoModelFactory
-from django.utils import timezone
 from apps.accounts.tests.factories import UserFactory
 from apps.expenses.models import Category, Expense
 

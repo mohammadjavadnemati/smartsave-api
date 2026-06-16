@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from django.utils import timezone
 from .models import SavingsGoal, SavingsDeposit
 from core.utils import calculate_months_to_goal
-
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
 
 class SavingsDepositSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,7 +11,6 @@ class SavingsDepositSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at')
 
     def validate_goal(self, value):
-        # چک کردن اینکه هدف متعلق به این کاربر باشه
         user = self.context['request'].user
         if value.user != user:
             raise serializers.ValidationError('Invalid goal')
@@ -64,11 +63,10 @@ class SavingsGoalSerializer(serializers.ModelSerializer):
 
     def get_months_to_goal(self, obj):
         """
-        محاسبه تعداد ماه تا رسیدن به هدف
-        بر اساس میانگین واریزی‌های ماهانه
+        Calculate the number of months required to reach the goal
+        based on the average monthly deposits
         """
-        from django.db.models import Sum, Count
-        from django.db.models.functions import TruncMonth
+
 
         monthly_avg = obj.deposits.annotate(
             month=TruncMonth('date')
@@ -93,7 +91,7 @@ class SavingsGoalSerializer(serializers.ModelSerializer):
         )
 
     def get_recent_deposits(self, obj):
-        """آخرین ۵ واریزی"""
+        """Last 5 deposits"""
         deposits = obj.deposits.order_by('-date')[:5]
         return SavingsDepositSerializer(deposits, many=True).data
 
@@ -129,7 +127,7 @@ class SavingsGoalUpdateSerializer(serializers.ModelSerializer):
 
 
 class GoalProgressSerializer(serializers.Serializer):
-    """پیشرفت کلی همه اهداف"""
+    """Overall progress of all goals"""
     total_goals = serializers.IntegerField()
     active_goals = serializers.IntegerField()
     completed_goals = serializers.IntegerField()

@@ -14,6 +14,14 @@ A smart personal finance management system built with Django REST Framework.
 - **Savings Impact Calculator** — See how much you'd save by cutting an expense
 
 ---
+## Built With
+
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
+![Django](https://img.shields.io/badge/Django-5.0-green?logo=django)
+![DRF](https://img.shields.io/badge/DRF-3.15-red)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)
+![JWT](https://img.shields.io/badge/JWT-Auth-orange)
+![pytest](https://img.shields.io/badge/pytest-85%25_coverage-brightgreen)
 
 ## Tech Stack
 

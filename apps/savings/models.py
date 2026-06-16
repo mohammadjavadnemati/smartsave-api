@@ -57,7 +57,7 @@ class SavingsGoal(models.Model):
 
     @property
     def progress_percentage(self):
-        """درصد پیشرفت به سمت هدف"""
+        """Progress percentage toward the goal"""
         if self.target_amount <= 0:
             return 0
         percentage = (self.current_amount / self.target_amount) * 100
@@ -65,7 +65,7 @@ class SavingsGoal(models.Model):
 
     @property
     def remaining_amount(self):
-        """مقدار باقی‌مانده تا هدف"""
+        """Remaining amount to reach the goal"""
         remaining = self.target_amount - self.current_amount
         return max(remaining, Decimal('0.00'))
 
@@ -75,7 +75,7 @@ class SavingsGoal(models.Model):
 
 
 class SavingsDeposit(models.Model):
-    """هر بار که کاربر به هدفش پول اضافه می‌کنه"""
+    """Whenever the user adds money to their goal"""
     goal = models.ForeignKey(
         SavingsGoal,
         on_delete=models.CASCADE,

@@ -16,7 +16,7 @@ from apps.budgets.models import Budget
 
 
 def get_month_range(year: int, month: int):
-    """برگرداندن اول و آخر ماه"""
+    """Return first and last day of the month"""
     import calendar
     first_day = date(year, month, 1)
     last_day = date(year, month, calendar.monthrange(year, month)[1])
@@ -30,14 +30,13 @@ def calculate_financial_health_score(
     expense_to_income: float,
 ) -> dict:
     """
-    محاسبه امتیاز سلامت مالی بین ۰ تا ۱۰۰
-    فاکتورها:
-    - نرخ پس‌انداز (۳۰ امتیاز)
-    - رعایت بودجه (۳۰ امتیاز)
-    - ثبات درآمد (۲۰ امتیاز)
-    - نسبت هزینه به درآمد (۲۰ امتیاز)
+    Calculation of financial health score between 0 and 100
+    Factors:
+    - Savings rate (30 points)
+    - Budget compliance (30 points)
+    - Income stability (20 points)
+    - Expense to income ratio (20 points)
     """
-    # امتیاز نرخ پس‌انداز
     if savings_rate >= 20:
         savings_score = 30
     elif savings_rate >= 10:
@@ -47,7 +46,6 @@ def calculate_financial_health_score(
     else:
         savings_score = 0
 
-    # امتیاز رعایت بودجه
     if budget_adherence >= 90:
         budget_score = 30
     elif budget_adherence >= 70:
@@ -57,7 +55,6 @@ def calculate_financial_health_score(
     else:
         budget_score = 0
 
-    # امتیاز ثبات درآمد
     if income_stability >= 80:
         income_score = 20
     elif income_stability >= 60:
@@ -67,7 +64,6 @@ def calculate_financial_health_score(
     else:
         income_score = 0
 
-    # امتیاز نسبت هزینه به درآمد
     if expense_to_income <= 50:
         expense_score = 20
     elif expense_to_income <= 70:
@@ -112,21 +108,19 @@ class DashboardView(APIView):
         ],
     )
     def get(self, request):
-        """داشبورد اصلی مالی"""
+        """Main financial dashboard"""
         now = timezone.now()
         year = int(request.query_params.get('year', now.year))
         month = int(request.query_params.get('month', now.month))
 
         first_day, last_day = get_month_range(year, month)
 
-        # ماه قبل
         if month == 1:
             prev_year, prev_month = year - 1, 12
         else:
             prev_year, prev_month = year, month - 1
         prev_first, prev_last = get_month_range(prev_year, prev_month)
 
-        # درآمد و هزینه ماه جاری
         current_income = Income.objects.filter(
             user=request.user, date__range=(first_day, last_day)
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
@@ -135,7 +129,6 @@ class DashboardView(APIView):
             user=request.user, date__range=(first_day, last_day)
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-        # درآمد و هزینه ماه قبل
         prev_income = Income.objects.filter(
             user=request.user, date__range=(prev_first, prev_last)
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
@@ -144,23 +137,19 @@ class DashboardView(APIView):
             user=request.user, date__range=(prev_first, prev_last)
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-        # محاسبه پس‌انداز
         current_savings = current_income - current_expense
         prev_savings = prev_income - prev_expense
 
-        # نرخ پس‌انداز
         savings_rate = (
             round(float(current_savings / current_income * 100), 2)
             if current_income > 0 else 0
         )
 
-        # درصد تغییر نسبت به ماه قبل
         def change_percentage(current, previous):
             if previous == 0:
                 return 0
             return round(float((current - previous) / previous * 100), 2)
 
-        # بودجه ماه جاری
         budgets = Budget.objects.filter(
             user=request.user, year=year, month=month, is_active=True
         ).select_related('category')
@@ -173,17 +162,14 @@ class DashboardView(APIView):
             if total_budget > 0 else 0
         )
 
-        # اهداف پس‌انداز
         goals = SavingsGoal.objects.filter(user=request.user)
         active_goals = goals.filter(status=SavingsGoal.Status.ACTIVE).count()
         completed_goals = goals.filter(status=SavingsGoal.Status.COMPLETED).count()
 
-        # تعداد هشدارها
         alerts_count = sum(
             1 for b in budgets if b.alert_level != 'none'
         )
 
-        # امتیاز سلامت مالی
         expense_to_income = (
             float(current_expense / current_income * 100)
             if current_income > 0 else 100
@@ -227,11 +213,10 @@ class MonthlyTrendView(APIView):
         ],
     )
     def get(self, request):
-        """روند ماهانه درآمد، هزینه و پس‌انداز"""
+        """Monthly trends of income, expenses, and savings"""
         months_count = int(request.query_params.get('months', 6))
         months_count = min(months_count, 24)
 
-        # درآمد ماهانه
         monthly_income = {
             item['month']: item['total']
             for item in Income.objects.filter(
@@ -242,7 +227,6 @@ class MonthlyTrendView(APIView):
             .order_by('-month')[:months_count]
         }
 
-        # هزینه ماهانه
         monthly_expense = {
             item['month']: item['total']
             for item in Expense.objects.filter(
@@ -290,7 +274,7 @@ class CategoryExpenseView(APIView):
         ],
     )
     def get(self, request):
-        """توزیع هزینه‌ها بر اساس دسته‌بندی"""
+        """Expense distribution by category"""
         now = timezone.now()
         year = int(request.query_params.get('year', now.year))
         month = int(request.query_params.get('month', now.month))
@@ -335,11 +319,10 @@ class FinancialHealthView(APIView):
         ],
     )
     def get(self, request):
-        """امتیاز سلامت مالی با پیشنهادهای بهبود"""
+        """Financial health score with improvement suggestions"""
         months_count = int(request.query_params.get('months', 3))
         now = timezone.now()
 
-        # میانگین درآمد و هزینه چند ماه اخیر
         from dateutil.relativedelta import relativedelta
         start_date = (now - relativedelta(months=months_count)).date()
 
@@ -364,7 +347,6 @@ class FinancialHealthView(APIView):
             if avg_monthly_income > 0 else 100
         )
 
-        # بودجه‌بندی
         budgets = Budget.objects.filter(
             user=request.user, is_active=True
         ).select_related('category')
@@ -375,7 +357,6 @@ class FinancialHealthView(APIView):
             if total_budgets > 0 else 50
         )
 
-        # درآمد ماهانه
         monthly_incomes = Income.objects.filter(
             user=request.user, date__gte=start_date
         ).annotate(month=TruncMonth('date')).values('month').annotate(
@@ -396,7 +377,6 @@ class FinancialHealthView(APIView):
             expense_to_income=expense_to_income,
         )
 
-        # پیشنهادهای هوشمند
         suggestions = []
         if savings_rate < 20:
             suggestions.append(
@@ -443,10 +423,10 @@ class SmartInsightsView(APIView):
     )
     def get(self, request):
         """
-        تحلیل هوشمند مالی:
-        - بیشترین هزینه مربوط به خوراکی است
-        - کاهش ۲۰٪ هزینه تفریح می‌تواند سالانه ۲۴۰ دلار صرفه‌جویی ایجاد کند
-        - نرخ پس‌انداز شما نسبت به ماه قبل ۱۵٪ افزایش یافته است
+        Smart financial analysis:
+        - The highest expense is related to food
+        - Reducing entertainment expenses by 20% could save $240 annually
+        - Your savings rate has increased by 15% compared to last month
         """
         now = timezone.now()
         year = int(request.query_params.get('year', now.year))
@@ -462,7 +442,6 @@ class SmartInsightsView(APIView):
 
         insights = []
 
-        # درآمد و هزینه ماه جاری و قبلی
         current_income = Income.objects.filter(
             user=request.user, date__range=(first_day, last_day)
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
@@ -479,7 +458,6 @@ class SmartInsightsView(APIView):
             user=request.user, date__range=(prev_first, prev_last)
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-        # بیشترین دسته هزینه
         top_category = Expense.objects.filter(
             user=request.user, date__range=(first_day, last_day)
         ).values('category__name').annotate(
@@ -498,7 +476,6 @@ class SmartInsightsView(APIView):
                 'impact': 'neutral',
             })
 
-        # مقایسه هزینه با ماه قبل
         if prev_expense > 0:
             expense_change = float(
                 (current_expense - prev_expense) / prev_expense * 100
@@ -524,7 +501,6 @@ class SmartInsightsView(APIView):
                     'impact': 'positive',
                 })
 
-        # مقایسه نرخ پس‌انداز
         current_savings_rate = (
             float((current_income - current_expense) / current_income * 100)
             if current_income > 0 else 0
@@ -557,7 +533,6 @@ class SmartInsightsView(APIView):
                     'impact': 'negative',
                 })
 
-        # پیشنهاد کاهش هزینه دسته‌ها
         by_category = Expense.objects.filter(
             user=request.user, date__range=(first_day, last_day)
         ).values('category__name').annotate(

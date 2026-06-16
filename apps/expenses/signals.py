@@ -8,6 +8,6 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def create_default_categories(sender, instance, created, **kwargs):
-    """وقتی کاربر جدید ساخته میشه، دسته‌بندی‌های پیش‌فرض براش میسازیم"""
+    """Create default categories when a new user is created"""
     if created:
         Category.create_defaults_for_user(instance)

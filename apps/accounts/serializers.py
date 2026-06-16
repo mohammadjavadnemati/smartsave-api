@@ -36,7 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """اضافه کردن اطلاعات کاربر به پاسخ لاگین"""
+
 
     def validate(self, attrs):
         data = super().validate(attrs)

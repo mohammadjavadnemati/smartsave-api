@@ -18,7 +18,6 @@ class CategorySerializer(serializers.ModelSerializer):
             'is_default', 'expense_count', 'total_amount'
         )
         read_only_fields = ('id', 'is_default')
-        # این رو اضافه کن
         extra_kwargs = {
             'name': {'required': False},
             'slug': {'required': False},
@@ -93,7 +92,7 @@ class ExpenseUpdateSerializer(serializers.ModelSerializer):
 
 
 class ExpenseSummarySerializer(serializers.Serializer):
-    """خلاصه هزینه‌ها برای داشبورد"""
+    """Expense summary for dashboard"""
     total_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
     expense_count = serializers.IntegerField()
     average_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
@@ -102,8 +101,8 @@ class ExpenseSummarySerializer(serializers.Serializer):
 
 class SavingsImpactSerializer(serializers.Serializer):
     """
-    نتیجه ماشین حساب تأثیر پس‌انداز
-    کاربر سرچ می‌کنه مثلاً سیگار و میبینه اگه نخریده بود چقدر پول داشت
+    Savings impact calculator result
+    User searches for something like cigarettes and sees how much money they would have if they hadn't bought it
     """
     query = serializers.CharField()
     total_spent = serializers.DecimalField(max_digits=12, decimal_places=2)
@@ -182,7 +181,7 @@ class RecurringExpenseUpdateSerializer(serializers.ModelSerializer):
 
 
 class RecurringSummarySerializer(serializers.Serializer):
-    """خلاصه هزینه‌های تکرارشونده"""
+    """Recurring expenses summary"""
     total_monthly_cost = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_annual_cost = serializers.DecimalField(max_digits=12, decimal_places=2)
     active_count = serializers.IntegerField()

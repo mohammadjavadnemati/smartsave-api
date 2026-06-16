@@ -8,6 +8,6 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def create_default_income_sources(sender, instance, created, **kwargs):
-    """وقتی کاربر جدید ساخته میشه، منابع درآمدی پیش‌فرض براش میسازیم"""
+    """When a new user is created, default income sources are created for them"""
     if created:
         IncomeSource.create_defaults_for_user(instance)

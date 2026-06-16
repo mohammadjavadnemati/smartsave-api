@@ -9,7 +9,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100, blank=True, verbose_name='first name')
     last_name = models.CharField(max_length=100, blank=True, verbose_name='last name')
 
-    # تنظیمات مالی کاربر
+
     default_currency = models.CharField(
         max_length=3,
         default='USD',

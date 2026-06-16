@@ -4,15 +4,12 @@ from .models import Income, IncomeSource
 
 
 class IncomeFilter(filters.FilterSet):
-    # فیلتر بر اساس بازه تاریخ
     date_from = django_filters.DateFilter(field_name='date', lookup_expr='gte')
     date_to = django_filters.DateFilter(field_name='date', lookup_expr='lte')
 
-    # فیلتر بر اساس بازه مبلغ
     amount_min = django_filters.NumberFilter(field_name='amount', lookup_expr='gte')
     amount_max = django_filters.NumberFilter(field_name='amount', lookup_expr='lte')
 
-    # فیلتر بر اساس ماه و سال
     month = django_filters.NumberFilter(field_name='date', lookup_expr='month')
     year = django_filters.NumberFilter(field_name='date', lookup_expr='year')
 

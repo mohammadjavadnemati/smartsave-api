@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 
 class FinancialHealthSerializer(serializers.Serializer):
-    """امتیاز سلامت مالی کاربر"""
+    """User financial health score"""
     score = serializers.IntegerField()
     level = serializers.CharField()
     breakdown = serializers.DictField()
@@ -10,36 +10,31 @@ class FinancialHealthSerializer(serializers.Serializer):
 
 
 class DashboardSerializer(serializers.Serializer):
-    """داشبورد اصلی"""
-    # درآمد و هزینه
+    """Main dashboard"""
     total_income = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_expense = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_savings = serializers.DecimalField(max_digits=12, decimal_places=2)
     savings_rate = serializers.FloatField()
 
-    # مقایسه با ماه قبل
     income_change_percentage = serializers.FloatField()
     expense_change_percentage = serializers.FloatField()
     savings_change_percentage = serializers.FloatField()
 
-    # بودجه
     total_budget = serializers.DecimalField(max_digits=12, decimal_places=2)
     budget_usage_percentage = serializers.FloatField()
     budgets_exceeded = serializers.IntegerField()
 
-    # اهداف پس‌انداز
     active_goals = serializers.IntegerField()
     completed_goals = serializers.IntegerField()
 
-    # هشدارها
     alerts_count = serializers.IntegerField()
 
-    # سلامت مالی
+
     financial_health_score = serializers.IntegerField()
 
 
 class MonthlyTrendSerializer(serializers.Serializer):
-    """روند ماهانه درآمد و هزینه"""
+    """Monthly income and expense trends"""
     month = serializers.DateField()
     income = serializers.DecimalField(max_digits=12, decimal_places=2)
     expense = serializers.DecimalField(max_digits=12, decimal_places=2)
@@ -48,7 +43,7 @@ class MonthlyTrendSerializer(serializers.Serializer):
 
 
 class CategoryExpenseSerializer(serializers.Serializer):
-    """هزینه بر اساس دسته‌بندی"""
+    """Expenses by category"""
     category_name = serializers.CharField()
     category_slug = serializers.CharField()
     total_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
@@ -57,7 +52,7 @@ class CategoryExpenseSerializer(serializers.Serializer):
 
 
 class SmartInsightSerializer(serializers.Serializer()):
-    """تحلیل هوشمند مالی"""
+    """Smart financial analysis"""
     type = serializers.CharField()
     title = serializers.CharField()
     message = serializers.CharField()

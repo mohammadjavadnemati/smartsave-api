@@ -1,13 +1,10 @@
-from datetime import datetime, timezone as dt_timezone
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
 
 class BlacklistableJWTAuthentication(JWTAuthentication):
-    """
-    چک می‌کنه که access token در blacklist نباشه
-    """
+
     def get_validated_token(self, raw_token):
         validated_token = super().get_validated_token(raw_token)
 
@@ -20,9 +17,7 @@ class BlacklistableJWTAuthentication(JWTAuthentication):
 
 
 class BlacklistableJWTAuthenticationExtension(OpenApiAuthenticationExtension):
-    """
-    به spectacular میگه که این custom class همون JWT Bearer هست
-    """
+
     target_class = 'apps.accounts.authentication.BlacklistableJWTAuthentication'
     name = 'JWTAuth'
 

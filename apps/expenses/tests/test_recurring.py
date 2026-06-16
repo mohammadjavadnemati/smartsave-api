@@ -45,7 +45,6 @@ class TestRecurringExpenseViewSet:
         client, user = auth_client
         category = CategoryFactory(user=user)
         url = reverse('expenses:recurring-list')
-        # هزینه سالانه ۱۲۰ دلار = ماهانه ۱۰ دلار
         data = {
             'title': 'Annual subscription',
             'amount': '120.00',
@@ -59,7 +58,7 @@ class TestRecurringExpenseViewSet:
         assert Decimal(response.data['annual_cost']) == Decimal('120.00')
 
     def test_auto_generate_on_list(self, auth_client):
-        """تست اینکه recurring expenses خودکار generate میشن"""
+        """Test that recurring expenses are automatically generated"""
         client, user = auth_client
         category = CategoryFactory(user=user)
         RecurringExpense.objects.create(
@@ -72,10 +71,8 @@ class TestRecurringExpenseViewSet:
             is_active=True,
             last_generated=None,
         )
-        # قبل از request هیچ expense ای نیست
         assert Expense.objects.filter(user=user).count() == 0
 
-        # بعد از GET expenses، auto-generate میشه
         url = reverse('expenses:expense-list')
         response = client.get(url)
         assert response.status_code == status.HTTP_200_OK

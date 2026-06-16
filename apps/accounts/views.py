@@ -34,7 +34,7 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        # ساخت توکن بعد از ثبت‌نام
+
         refresh = RefreshToken.for_user(user)
         return Response({
             'message': 'Registration successful',
@@ -164,18 +164,3 @@ class ChangePasswordView(APIView):
 class CustomTokenRefreshView(TokenRefreshView):
     pass
 
-# @extend_schema(tags=['Auth'])
-# class ChangePasswordView(APIView):
-#     permission_classes = [IsAuthenticated]
-#
-#     def post(self, request):
-#         serializer = ChangePasswordSerializer(
-#             data=request.data,
-#             context={'request': request}
-#         )
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(
-#             {'message': 'Password changed successfully'},
-#             status=status.HTTP_200_OK
-#         )

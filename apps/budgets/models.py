@@ -48,7 +48,6 @@ class Budget(models.Model):
     class Meta:
         verbose_name = 'budget'
         verbose_name_plural = 'budgets'
-        # هر کاربر برای هر دسته‌بندی در هر ماه فقط یه بودجه داره
         unique_together = ('user', 'category', 'year', 'month', 'period')
         ordering = ['-year', '-month']
 
@@ -57,7 +56,7 @@ class Budget(models.Model):
 
     @property
     def spent_amount(self):
-        """مقدار خرج شده از این بودجه"""
+        """Amount spent from this budget"""
         from apps.expenses.models import Expense
         from django.db.models import Sum
 
@@ -76,13 +75,13 @@ class Budget(models.Model):
 
     @property
     def remaining_amount(self):
-        """مقدار باقی‌مانده از بودجه"""
+        """Remaining budget amount"""
         remaining = self.amount - self.spent_amount
         return remaining
 
     @property
     def usage_percentage(self):
-        """درصد استفاده از بودجه"""
+        """Percentage of budget used"""
         if self.amount <= 0:
             return 0
         percentage = (self.spent_amount / self.amount) * 100
@@ -91,10 +90,10 @@ class Budget(models.Model):
     @property
     def alert_level(self):
         """
-        سطح هشدار بودجه:
-        - none: زیر ۸۰٪
-        - warning: بین ۸۰٪ تا ۱۰۰٪
-        - exceeded: بیشتر از ۱۰۰٪
+        Budget alert level:
+        - none: below 80%
+        - warning: between 80% and 100%
+        - exceeded: above 100%
         """
         usage = self.usage_percentage
         if usage >= 100:

@@ -9,8 +9,7 @@ from .views import (
 )
 
 app_name = 'accounts'
-# MyStrongPass123!
-# nmty@gmail.com
+
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
