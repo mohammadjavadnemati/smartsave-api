@@ -22,7 +22,6 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'drf_spectacular',
-    'corsheaders',
 ]
 
 LOCAL_APPS = [

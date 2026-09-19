@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-wrap">
+    <div class="brand">
+      <span class="brand-mark">SS</span>
+      <span class="brand-name">SmartSave</span>
+    </div>
+
+    <div class="receipt">
+      <div class="receipt-head">
+        <p class="eyebrow">دفترچه مالی شما</p>
+        <h1>ورود به حساب</h1>
+      </div>
+
+      <form id="login-form" class="form" novalidate>
+        <label class="field">
+          <span>ایمیل</span>
+          <input type="text" id="identifier" required placeholder="you@example.com" autocomplete="username">
+        </label>
+        <label class="field">
+          <span>رمز عبور</span>
+          <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+        </label>
+        <p id="form-error" class="form-error" role="alert"></p>
+        <button type="submit" class="btn-gold">ورود به حساب</button>
+      </form>
+
+      <div class="receipt-tear"></div>
+    </div>
+
+    <p class="switch-line">حساب نداری؟ <a href="register.html">ثبت‌نام کن</a></p>
+  </div>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>

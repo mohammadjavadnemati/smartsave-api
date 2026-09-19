@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اهداف پس‌انداز | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="app-page">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand brand-sidebar">
+        <span class="brand-mark">SS</span>
+        <span class="brand-name">SmartSave</span>
+      </div>
+
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link"><span class="nav-ico">🏠</span> داشبورد</a>
+        <a href="expenses.html" class="nav-link"><span class="nav-ico">💳</span> هزینه‌ها</a>
+        <a href="incomes.html" class="nav-link"><span class="nav-ico">💰</span> درآمدها</a>
+        <a href="savings.html" class="nav-link"><span class="nav-ico">🎯</span> اهداف پس‌انداز</a>
+        <a href="budgets.html" class="nav-link"><span class="nav-ico">📊</span> بودجه‌ها</a>
+        <a href="analytics.html" class="nav-link"><span class="nav-ico">📈</span> آنالیتیکس</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="nav-link nav-link--danger">
+          <span class="nav-ico">🚪</span> خروج از حساب
+        </button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-btn only-mobile">☰</button>
+        <h1 class="page-title">اهداف پس‌انداز</h1>
+        <div class="topbar-user">
+          <span id="user-name" class="user-name">در حال بارگذاری...</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="overall-banner">
+          <div>
+            <p class="eyebrow">خلاصه کلی</p>
+            <h2>پیشرفت اهداف پس‌انداز</h2>
+          </div>
+          <div class="overall-stats">
+            <div><span>تعداد اهداف</span><strong id="overall-goals-count">—</strong></div>
+            <div><span>کل هدف‌گذاری‌شده</span><strong id="overall-total-target">—</strong></div>
+            <div><span>کل پس‌انداز شده</span><strong id="overall-total-saved">—</strong></div>
+          </div>
+        </div>
+
+        <div class="page-header">
+          <h2 style="font-family:var(--font-display);font-size:19px;">هدف‌ها</h2>
+          <button id="add-goal-btn" class="btn-primary">+ هدف جدید</button>
+        </div>
+
+        <div id="goals-grid" class="goals-grid"></div>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="goal-modal">
+    <div class="modal-box">
+      <h3 id="goal-modal-title">هدف جدید</h3>
+      <form id="goal-form" class="form">
+        <label class="field">
+  <span>نام هدف</span>
+  <input type="text" id="goal-title" required placeholder="مثلاً: سفر شمال">
+</label>
+<label class="field">
+  <span>توضیحات (اختیاری)</span>
+  <input type="text" id="goal-description">
+</label>
+        <label class="field">
+          <span>مبلغ هدف (تومان)</span>
+          <input type="number" id="goal-target" step="0.01" required>
+        </label>
+        <label class="field">
+          <span>مهلت (اختیاری)</span>
+          <input type="date" id="goal-deadline">
+        </label>
+        <label class="field">
+  <span>یادداشت (اختیاری)</span>
+  <input type="text" id="deposit-note">
+</label>
+        <div class="modal-actions">
+          <button type="button" id="goal-modal-cancel" class="btn-ghost">انصراف</button>
+          <button type="submit" class="btn-primary">ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deposit-modal">
+    <div class="modal-box">
+      <h3>ثبت واریز جدید</h3>
+      <form id="deposit-form" class="form">
+        <label class="field">
+          <span>مبلغ (تومان)</span>
+          <input type="number" id="deposit-amount" step="0.01" required>
+        </label>
+        <label class="field">
+          <span>تاریخ</span>
+          <input type="date" id="deposit-date" required>
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="deposit-modal-cancel" class="btn-ghost">انصراف</button>
+          <button type="submit" class="btn-primary">ثبت واریز</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/savings.js"></script>
+</body>
+</html>

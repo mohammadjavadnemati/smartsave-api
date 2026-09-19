@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هزینه‌ها | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="app-page">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand brand-sidebar">
+        <span class="brand-mark">SS</span>
+        <span class="brand-name">SmartSave</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link"><span class="nav-ico">🏠</span> داشبورد</a>
+        <a href="expenses.html" class="nav-link"><span class="nav-ico">💳</span> هزینه‌ها</a>
+        <a href="incomes.html" class="nav-link"><span class="nav-ico">💰</span> درآمدها</a>
+        <a href="savings.html" class="nav-link"><span class="nav-ico">🎯</span> اهداف پس‌انداز</a>
+        <a href="budgets.html" class="nav-link"><span class="nav-ico">📊</span> بودجه‌ها</a>
+        <a href="analytics.html" class="nav-link"><span class="nav-ico">📈</span> آنالیتیکس</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="nav-link nav-link--danger"><span class="nav-ico">🚪</span> خروج از حساب</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-btn only-mobile">☰</button>
+        <h1 class="page-title">هزینه‌ها</h1>
+        <div class="topbar-user"><span id="user-name" class="user-name">در حال بارگذاری...</span></div>
+      </header>
+
+      <main class="content">
+        <div class="tabs-row">
+          <button class="tab-btn active" data-tab="panel-list">لیست هزینه‌ها</button>
+          <button class="tab-btn" data-tab="panel-recurring">هزینه‌های تکرارشونده</button>
+        </div>
+
+        <!-- تب ۱: لیست هزینه‌ها -->
+        <div id="panel-list" class="tab-panel active">
+          <div class="layout-2col">
+            <div>
+              <div class="page-header">
+                <h2 style="font-family:var(--font-display);font-size:19px;">لیست هزینه‌ها</h2>
+                <button id="add-expense-btn" class="btn-primary">+ افزودن هزینه</button>
+              </div>
+
+              <div class="filter-bar">
+                <select id="filter-category"><option value="">همه دسته‌ها</option></select>
+                <input type="text" id="filter-search" placeholder="جست‌وجو...">
+                <input type="date" id="filter-from" title="از تاریخ">
+                <input type="date" id="filter-to" title="تا تاریخ">
+                <button id="filter-reset" class="btn-ghost">پاک‌سازی فیلتر</button>
+              </div>
+
+              <div class="table-card">
+                <table>
+                  <thead><tr><th>تاریخ</th><th>توضیحات</th><th>دسته</th><th>مبلغ</th><th></th></tr></thead>
+                  <tbody id="expenses-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="impact-card">
+              <p class="eyebrow">ماشین‌حساب تاثیر پس‌انداز</p>
+              <p style="font-size:13px;color:var(--slate);line-height:1.7;">
+                یه کلمه‌کلیدی بزن (مثلاً «سیگار» یا «قهوه») ببین قطعش چقدر برات صرفه‌جویی می‌کنه.
+              </p>
+              <div class="impact-search">
+                <input type="text" id="impact-input" placeholder="مثلاً: سیگار">
+                <button id="impact-search-btn">جست‌وجو</button>
+              </div>
+              <div id="impact-results" class="impact-results"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- تب ۲: هزینه‌های تکرارشونده -->
+        <div id="panel-recurring" class="tab-panel">
+          <div class="recurring-summary-row">
+            <div class="stat-card"><p class="eyebrow">هزینه‌ی ماهانه کل</p><p class="stat-value expense" id="r-stat-monthly">—</p></div>
+            <div class="stat-card"><p class="eyebrow">هزینه‌ی سالانه کل</p><p class="stat-value expense" id="r-stat-annual">—</p></div>
+            <div class="stat-card"><p class="eyebrow">تعداد فعال</p><p class="stat-value net" id="r-stat-count">—</p></div>
+          </div>
+
+          <div class="page-header">
+            <h2 style="font-family:var(--font-display);font-size:19px;">هزینه‌های تکرارشونده</h2>
+            <button id="add-recurring-btn" class="btn-primary">+ افزودن</button>
+          </div>
+
+          <div class="table-card">
+            <table>
+              <thead><tr><th>عنوان</th><th>دسته</th><th>مبلغ</th><th>دوره</th><th>فعال</th><th></th></tr></thead>
+              <tbody id="recurring-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- مودال هزینه‌ی عادی -->
+  <div class="modal-overlay" id="expense-modal">
+    <div class="modal-box">
+      <h3 id="modal-title">افزودن هزینه</h3>
+      <form id="expense-form" class="form">
+        <label class="field"><span>توضیحات</span><input type="text" id="expense-description" required></label>
+        <div class="row-2">
+          <label class="field"><span>مبلغ (تومان)</span><input type="number" id="expense-amount" step="0.01" required></label>
+          <label class="field"><span>تاریخ</span><input type="date" id="expense-date" required></label>
+        </div>
+        <label class="field"><span>دسته‌بندی</span><select id="expense-category"><option value="">انتخاب دسته</option></select></label>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel" class="btn-ghost">انصراف</button>
+          <button type="submit" class="btn-primary">ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- مودال هزینه‌ی تکرارشونده -->
+  <div class="modal-overlay" id="recurring-modal">
+    <div class="modal-box">
+      <h3 id="recurring-modal-title">افزودن هزینه‌ی تکرارشونده</h3>
+      <form id="recurring-form" class="form">
+        <label class="field"><span>عنوان</span><input type="text" id="r-title" required placeholder="مثلاً: نتفلیکس"></label>
+        <div class="row-2">
+          <label class="field"><span>مبلغ (تومان)</span><input type="number" id="r-amount" step="0.01" required></label>
+          <label class="field">
+            <span>دوره تکرار</span>
+            <select id="r-frequency">
+              <option value="daily">روزانه</option>
+              <option value="weekly">هفتگی</option>
+              <option value="monthly" selected>ماهانه</option>
+              <option value="yearly">سالانه</option>
+            </select>
+          </label>
+        </div>
+        <label class="field"><span>دسته‌بندی</span><select id="r-category"><option value="">انتخاب دسته</option></select></label>
+        <div class="row-2">
+          <label class="field"><span>تاریخ شروع</span><input type="date" id="r-start" required></label>
+          <label class="field"><span>تاریخ پایان (اختیاری)</span><input type="date" id="r-end"></label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="recurring-modal-cancel" class="btn-ghost">انصراف</button>
+          <button type="submit" class="btn-primary">ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/recurring.js"></script>
+  <script src="assets/js/expenses.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ثبت‌نام | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-wrap">
+    <div class="brand">
+      <span class="brand-mark">SS</span>
+      <span class="brand-name">SmartSave</span>
+    </div>
+
+    <div class="receipt">
+      <div class="receipt-head">
+        <p class="eyebrow">شروع کن</p>
+        <h1>ساخت حساب جدید</h1>
+      </div>
+
+      <form id="register-form" class="form" novalidate>
+        <div class="row-2">
+          <label class="field">
+            <span>نام</span>
+            <input type="text" id="first_name" required>
+          </label>
+          <label class="field">
+            <span>نام خانوادگی</span>
+            <input type="text" id="last_name" required>
+          </label>
+        </div>
+        <label class="field">
+          <span>ایمیل</span>
+          <input type="email" id="email" required>
+        </label>
+        <label class="field">
+          <span>رمز عبور</span>
+          <input type="password" id="password" required>
+        </label>
+        <label class="field">
+          <span>تکرار رمز عبور</span>
+          <input type="password" id="password_confirm" required>
+        </label>
+        <p id="form-error" class="form-error" role="alert"></p>
+        <button type="submit" class="btn-gold">ساخت حساب</button>
+      </form>
+
+      <div class="receipt-tear"></div>
+    </div>
+
+    <p class="switch-line">قبلاً ثبت‌نام کردی؟ <a href="index.html">وارد شو</a></p>
+  </div>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>

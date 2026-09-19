@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>درآمدها | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="app-page">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand brand-sidebar">
+        <span class="brand-mark">SS</span>
+        <span class="brand-name">SmartSave</span>
+      </div>
+
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link"><span class="nav-ico">🏠</span> داشبورد</a>
+        <a href="expenses.html" class="nav-link"><span class="nav-ico">💳</span> هزینه‌ها</a>
+        <a href="incomes.html" class="nav-link"><span class="nav-ico">💰</span> درآمدها</a>
+        <a href="savings.html" class="nav-link"><span class="nav-ico">🎯</span> اهداف پس‌انداز</a>
+        <a href="budgets.html" class="nav-link"><span class="nav-ico">📊</span> بودجه‌ها</a>
+        <a href="analytics.html" class="nav-link"><span class="nav-ico">📈</span> آنالیتیکس</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="nav-link nav-link--danger">
+          <span class="nav-ico">🚪</span> خروج از حساب
+        </button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-btn only-mobile">☰</button>
+        <h1 class="page-title">درآمدها</h1>
+        <div class="topbar-user">
+          <span id="user-name" class="user-name">در حال بارگذاری...</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="stats-row">
+          <div class="stat-card">
+            <p class="eyebrow">مجموع درآمد</p>
+            <p class="stat-value income" id="stat-total">—</p>
+          </div>
+          <div class="stat-card">
+            <p class="eyebrow">میانگین ماهانه</p>
+            <p class="stat-value net" id="stat-average">—</p>
+          </div>
+          <div class="stat-card">
+            <p class="eyebrow">پردرآمدترین منبع</p>
+            <p class="stat-value net" id="stat-top-source" style="font-size:18px;">—</p>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:22px;">
+  <p class="eyebrow">روند ماهانه‌ی درآمد</p>
+  <canvas id="compare-chart"></canvas>
+</div>
+
+        <div class="page-header">
+          <h2 style="font-family:var(--font-display);font-size:19px;">منابع درآمد</h2>
+        </div>
+        <div class="sources-row">
+          <div id="sources-chips" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+          <form id="add-source-form" class="add-source-form">
+            <input type="text" id="new-source-name" placeholder="منبع جدید (مثلاً: فریلنسری)">
+            <button type="submit">+ افزودن</button>
+          </form>
+        </div>
+
+        <div class="page-header">
+          <h2 style="font-family:var(--font-display);font-size:19px;">لیست درآمدها</h2>
+          <button id="add-income-btn" class="btn-primary">+ افزودن درآمد</button>
+        </div>
+
+        <div class="filter-bar">
+          <select id="filter-source"><option value="">همه منابع</option></select>
+          <input type="date" id="filter-from" title="از تاریخ">
+          <input type="date" id="filter-to" title="تا تاریخ">
+          <button id="filter-reset" class="btn-ghost">پاک‌سازی فیلتر</button>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>تاریخ</th>
+                <th>منبع</th>
+                <th>مبلغ</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="incomes-body"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="income-modal">
+    <div class="modal-box">
+      <h3 id="income-modal-title">افزودن درآمد</h3>
+      <form id="income-form" class="form">
+        <label class="field">
+          <span>منبع درآمد</span>
+          <select id="income-source"><option value="">انتخاب منبع</option></select>
+        </label>
+        <div class="row-2">
+          <label class="field">
+            <span>مبلغ (تومان)</span>
+            <input type="number" id="income-amount" step="0.01" required>
+          </label>
+          <label class="field">
+            <span>تاریخ</span>
+            <input type="date" id="income-date" required>
+          </label>
+        </div>
+        <label class="field">
+  <span>توضیحات (اختیاری)</span>
+  <input type="text" id="income-description">
+</label>
+        <div class="modal-actions">
+          <button type="button" id="income-modal-cancel" class="btn-ghost">انصراف</button>
+          <button type="submit" class="btn-primary">ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/incomes.js"></script>
+</body>
+</html>

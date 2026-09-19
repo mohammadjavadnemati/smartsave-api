@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آنالیتیکس | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="app-page">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand brand-sidebar">
+        <span class="brand-mark">SS</span>
+        <span class="brand-name">SmartSave</span>
+      </div>
+
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link"><span class="nav-ico">🏠</span> داشبورد</a>
+        <a href="expenses.html" class="nav-link"><span class="nav-ico">💳</span> هزینه‌ها</a>
+        <a href="incomes.html" class="nav-link"><span class="nav-ico">💰</span> درآمدها</a>
+        <a href="savings.html" class="nav-link"><span class="nav-ico">🎯</span> اهداف پس‌انداز</a>
+        <a href="budgets.html" class="nav-link"><span class="nav-ico">📊</span> بودجه‌ها</a>
+        <a href="analytics.html" class="nav-link"><span class="nav-ico">📈</span> آنالیتیکس</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="nav-link nav-link--danger">
+          <span class="nav-ico">🚪</span> خروج از حساب
+        </button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-btn only-mobile">☰</button>
+        <h1 class="page-title">آنالیتیکس</h1>
+        <div class="topbar-user">
+          <span id="user-name" class="user-name">در حال بارگذاری...</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="an-filters">
+          <label class="an-filter">ماه
+            <input type="month" id="period">
+          </label>
+          <label class="an-filter">روند ماهانه
+            <select id="trend-months">
+              <option value="3">۳ ماه اخیر</option>
+              <option value="6" selected>۶ ماه اخیر</option>
+              <option value="12">۱۲ ماه اخیر</option>
+              <option value="24">۲۴ ماه اخیر</option>
+            </select>
+          </label>
+          <label class="an-filter">امتیاز سلامت
+            <select id="health-months">
+              <option value="1">۱ ماه اخیر</option>
+              <option value="3" selected>۳ ماه اخیر</option>
+              <option value="6">۶ ماه اخیر</option>
+              <option value="12">۱۲ ماه اخیر</option>
+            </select>
+          </label>
+          <div class="an-seg" role="group" aria-label="بازه دسته‌بندی">
+            <button type="button" data-period="monthly" aria-pressed="true">ماهانه</button>
+            <button type="button" data-period="yearly" aria-pressed="false">سالانه</button>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="health-card">
+            <p class="eyebrow">امتیاز سلامت مالی</p>
+            <div class="health-gauge">
+              <svg viewBox="0 0 180 180" width="180" height="180">
+                <circle class="health-gauge-bg" cx="90" cy="90" r="70"></circle>
+                <circle id="health-arc" class="health-gauge-arc" cx="90" cy="90" r="70"></circle>
+              </svg>
+              <span id="health-score-num" class="health-score-num">—</span>
+              <p id="health-level" class="health-level"></p>
+            </div>
+            <div id="health-breakdown" class="health-breakdown"></div>
+            <div id="health-suggestions" class="suggestions-list"></div>
+          </div>
+
+          <div class="charts-stack">
+            <div class="chart-card">
+              <p class="eyebrow">درآمد و هزینه ماهانه</p>
+              <canvas id="trend-chart"></canvas>
+            </div>
+            <div class="chart-card">
+              <p class="eyebrow">هزینه بر اساس دسته</p>
+              <canvas id="category-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="insights-card">
+          <p class="eyebrow">بینش‌های هوشمند</p>
+          <div id="insights-list"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/analytics.js"></script>
+</body>
+</html>

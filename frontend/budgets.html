@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بودجه‌ها | SmartSave</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="app-page">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand brand-sidebar">
+        <span class="brand-mark">SS</span>
+        <span class="brand-name">SmartSave</span>
+      </div>
+
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link"><span class="nav-ico">🏠</span> داشبورد</a>
+        <a href="expenses.html" class="nav-link"><span class="nav-ico">💳</span> هزینه‌ها</a>
+        <a href="incomes.html" class="nav-link"><span class="nav-ico">💰</span> درآمدها</a>
+        <a href="savings.html" class="nav-link"><span class="nav-ico">🎯</span> اهداف پس‌انداز</a>
+        <a href="budgets.html" class="nav-link"><span class="nav-ico">📊</span> بودجه‌ها</a>
+        <a href="analytics.html" class="nav-link"><span class="nav-ico">📈</span> آنالیتیکس</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="nav-link nav-link--danger">
+          <span class="nav-ico">🚪</span> خروج از حساب
+        </button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-btn only-mobile">☰</button>
+        <h1 class="page-title">بودجه‌ها</h1>
+        <div class="topbar-user">
+          <span id="user-name" class="user-name">در حال بارگذاری...</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <div id="alerts-row" class="alerts-row"></div>
+        <div class="budget-summary-banner">
+  <div class="mini-stat"><span>کل بودجه</span><strong id="sum-total-budget">—</strong></div>
+  <div class="mini-stat"><span>کل خرج‌شده</span><strong id="sum-total-spent">—</strong></div>
+  <div class="mini-stat"><span>باقی‌مانده</span><strong id="sum-total-remaining">—</strong></div>
+  <div class="mini-stat"><span>درصد کل مصرف</span><strong id="sum-usage">—</strong></div>
+  <div class="mini-stat"><span>در مسیر درست</span><strong id="sum-on-track">—</strong></div>
+  <div class="mini-stat"><span>تجاوزشده</span><strong id="sum-exceeded">—</strong></div>
+</div>
+
+        <div class="page-header">
+          <h2 style="font-family:var(--font-display);font-size:19px;">پاکت‌های بودجه</h2>
+          <button id="add-budget-btn" class="btn-primary">+ افزودن بودجه</button>
+        </div>
+
+        <div id="budgets-grid" class="budgets-grid"></div>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="budget-modal">
+    <div class="modal-box">
+      <h3 id="budget-modal-title">افزودن بودجه</h3>
+      <form id="budget-form" class="form">
+  <label class="field">
+    <span>دسته‌بندی</span>
+    <select id="budget-category" required><option value="">انتخاب دسته</option></select>
+  </label>
+  <label class="field">
+    <span>مبلغ بودجه (تومان)</span>
+    <input type="number" id="budget-amount" step="0.01" required>
+  </label>
+  <div class="row-2">
+    <label class="field">
+      <span>نوع دوره</span>
+      <select id="budget-period">
+        <option value="monthly">ماهانه</option>
+        <option value="yearly">سالانه</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>سال</span>
+      <input type="number" id="budget-year" required>
+    </label>
+  </div>
+  <label class="field" id="budget-month-wrap">
+    <span>ماه (۱ تا ۱۲)</span>
+    <input type="number" id="budget-month" min="1" max="12">
+  </label>
+  <div class="modal-actions">
+    <button type="button" id="budget-modal-cancel" class="btn-ghost">انصراف</button>
+    <button type="submit" class="btn-primary">ذخیره</button>
+  </div>
+</form>
+    </div>
+  </div>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/budgets.js"></script>
+</body>
+</html>
