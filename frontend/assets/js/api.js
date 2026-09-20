@@ -1,5 +1,7 @@
-const API_BASE_URL = 'http://127.0.0.1:8000/api/v1'; // در پروداکشن عوضش کن
-
+const API_BASE_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  ? 'http://127.0.0.1:8000/api/v1'
+  : 'https://<اسم-سرویس>.onrender.com/api/v1';
+  
 const TokenStore = {
   getAccess: () => localStorage.getItem('ss_access'),
   getRefresh: () => localStorage.getItem('ss_refresh'),
